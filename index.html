@@ -45,7 +45,6 @@
         #home { text-align: center; background-color: #fff; }
         #tests, #packages, #service-areas { background-color: var(--color-background-section); }
 
-        /* Desktop Layout (Maintained for all views) */
         .home-grid { display: flex; justify-content: space-around; margin-top: 50px; gap: 40px; }
         .home-grid > div { background-color: var(--color-background-offwhite); padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: left; flex: 1; min-width: 300px; border-top: 4px solid var(--color-secondary-gold); }
         .home-grid ul { list-style-type: none; padding-left: 0; }
@@ -176,10 +175,10 @@
             
             <div class="enquiry-container">
                 <h2 style="text-align: center; color: #0d47a1;">Fill The Form For More Inquiry</h2>
-                <form action="#" method="POST" class="form-fields">
-                    <div class="form-group"><label>Name</label><input type="text" required placeholder="Your Name"></div>
-                    <div class="form-group"><label>Contact No.</label><input type="tel" required placeholder="8209746239"></div>
-                    <div class="form-group"><label>Message</label><textarea required placeholder="Enter Your Message"></textarea></div>
+                <form onsubmit="sendToWhatsApp(event)" class="form-fields">
+                    <div class="form-group"><label>Name</label><input type="text" id="user-name" required placeholder="Your Name"></div>
+                    <div class="form-group"><label>Contact No.</label><input type="tel" id="user-phone" required placeholder="8209746239"></div>
+                    <div class="form-group"><label>Message</label><textarea id="user-message" required placeholder="Enter Your Message"></textarea></div>
                     <button type="submit" class="submit-btn">Submit</button>
                 </form>
             </div>
@@ -252,5 +251,26 @@
     <footer>
         <p>© 2025 Patel Diagnostic Udaipur. All Rights Reserved. | Partnered with Redcliffe Labs.</p>
     </footer>
+
+    <script>
+        function sendToWhatsApp(event) {
+            event.preventDefault();
+            
+            var name = document.getElementById('user-name').value;
+            var phone = document.getElementById('user-phone').value;
+            var message = document.getElementById('user-message').value;
+            
+            var whatsappNumber = "918209746239";
+            
+            var text = "Hello Patel Diagnostic Udaipur,%0A%0A" + 
+                       "I have a new inquiry:%0A" +
+                       "*Name:* " + encodeURIComponent(name) + "%0A" +
+                       "*Contact:* " + encodeURIComponent(phone) + "%0A" +
+                       "*Message:* " + encodeURIComponent(message);
+            
+            var url = "https://wa.me/" + whatsappNumber + "?text=" + text;
+            window.open(url, '_blank');
+        }
+    </script>
 </body>
 </html>
