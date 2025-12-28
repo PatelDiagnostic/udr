@@ -3,66 +3,59 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Patel Diagnostic - Secure Billing</title>
+    <title>Patel Diagnostic - Final Secure System</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root { --main-blue: #0b4ea2; --main-red: #d71920; }
         body { font-family: 'Arial', sans-serif; margin: 0; background: #525659; color: #333; overflow: hidden; }
         
         /* LOGIN OVERLAY */
-        #login-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--main-blue); display: flex; justify-content: center; align-items: center;
-            z-index: 9999; transition: 0.5s;
-        }
-        .login-box {
-            background: white; padding: 40px; border-radius: 8px; text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3); width: 320px;
-        }
-        .login-box h2 { color: var(--main-blue); margin-bottom: 20px; }
-        .login-box input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        .login-box button { width: 100%; padding: 12px; background: var(--main-red); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--main-blue); display: flex; justify-content: center; align-items: center; z-index: 9999; }
+        .login-box { background: white; padding: 40px; border-radius: 8px; text-align: center; width: 320px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .login-box input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; }
+        .login-box button { width: 100%; padding: 12px; background: var(--main-red); color: white; border: none; cursor: pointer; font-weight: bold; }
 
-        /* MAIN APP LAYOUT */
+        /* MAIN APP */
         #main-app { display: none; height: 100vh; }
-        #admin-panel { width: 400px; background: #ffffff; padding: 15px; border-right: 1px solid #ccc; overflow-y: auto; height: 100vh; box-sizing: border-box; }
+        #admin-panel { width: 420px; background: #ffffff; padding: 15px; border-right: 1px solid #ccc; overflow-y: auto; height: 100vh; box-sizing: border-box; }
         .input-group { margin-bottom: 10px; }
         label { display: block; font-weight: bold; font-size: 12px; margin-bottom: 3px; }
         .req { color: var(--main-red); }
-        input[type="text"], input[type="number"], .search-box { width: 100%; padding: 8px; border: 1px solid #aaa; border-radius: 4px; box-sizing: border-box; }
+        input[type="text"], input[type="number"] { width: 100%; padding: 8px; border: 1px solid #aaa; border-radius: 4px; }
         
         .manual-entry { background: #f0f7ff; padding: 10px; border: 1px solid #0b4ea2; border-radius: 4px; margin: 10px 0; }
-        .test-selector { height: 200px; border: 1px solid #ccc; overflow-y: auto; padding: 10px; background: #f9f9f9; }
-        .test-item { display: flex; align-items: center; margin-bottom: 5px; font-size: 12px; border-bottom: 1px solid #eee; }
+        .test-selector { height: 200px; border: 1px solid #ccc; overflow-y: auto; padding: 10px; background: #f9f9f9; font-size: 11px; }
+        .test-item { display: flex; align-items: center; border-bottom: 1px solid #eee; padding: 3px 0; }
         
-        button.action-btn { width: 100%; padding: 10px; margin-top: 8px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; color: white; }
+        .history-section { margin-top: 20px; border-top: 2px solid #eee; padding-top: 10px; }
+        .history-table { width: 100%; font-size: 11px; border-collapse: collapse; }
+        .history-table th { background: #eee; padding: 5px; text-align: left; }
+        .history-table td { padding: 5px; border-bottom: 1px solid #ddd; }
 
-        /* PREVIEW AREA */
-        #preview-area { flex-grow: 1; display: flex; justify-content: center; padding: 20px; overflow-y: auto; width: 100%; }
+        #preview-area { flex-grow: 1; display: flex; justify-content: center; padding: 20px; overflow-y: auto; }
         #invoice-paper { width: 210mm; height: 297mm; background: white; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
         #invoice-content { width: 100%; height: 148.5mm; padding: 10mm 15mm; box-sizing: border-box; position: relative; border-bottom: 1px dashed #ccc; }
 
-        /* BRANDING (LOCKED SVG) */
         .inv-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--main-blue); padding-bottom: 10px; }
         .logo-svg { width: 230px; }
         .lab-info { text-align: right; }
         .lab-info h3 { margin: 0; color: var(--main-red); font-size: 14px; }
         .lab-info p { margin: 1px 0; font-size: 11px; font-weight: bold; }
         
-        .patient-box { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 10px; margin: 15px 0; padding: 10px; border: 1px solid #333; }
-        .p-detail { font-size: 13px; margin: 2px 0; }
+        .patient-box { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 10px; margin: 12px 0; padding: 8px; border: 1px solid #333; }
+        .p-detail { font-size: 12px; margin: 2px 0; }
         
-        table { width: 100%; border-collapse: collapse; }
-        th { background: var(--main-blue); color: white; padding: 6px; text-align: left; font-size: 12px; }
-        td { padding: 6px; border: 1px solid #eee; font-size: 12px; }
-        .total-row { margin-top: 10px; text-align: right; border-top: 2px solid #000; padding-top: 5px; font-size: 16px; font-weight: bold; color: var(--main-blue); }
+        table.bill-table { width: 100%; border-collapse: collapse; }
+        table.bill-table th { background: var(--main-blue); color: white; padding: 6px; text-align: left; font-size: 12px; }
+        table.bill-table td { padding: 5px; border: 1px solid #eee; font-size: 11px; }
+        .total-row { margin-top: 8px; text-align: right; border-top: 2px solid #000; padding-top: 5px; font-size: 15px; font-weight: bold; color: var(--main-blue); }
         .footer { position: absolute; bottom: 8mm; width: calc(100% - 30mm); text-align: center; font-size: 9px; border-top: 1px solid #ddd; }
 
         @media print {
             #login-overlay, #admin-panel { display: none; }
             #main-app { display: block; }
             #preview-area { padding: 0; }
-            #invoice-paper { box-shadow: none; }
+            #invoice-paper { box-shadow: none; border: none; }
             #invoice-content { border-bottom: none; }
         }
     </style>
@@ -71,47 +64,50 @@
 
 <div id="login-overlay">
     <div class="login-box">
-        <div style="width: 100px; margin: 0 auto 15px;">
-             <svg viewBox="0 0 24 24" fill="var(--main-blue)" width="50"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
-        </div>
-        <h2>Lab Login</h2>
-        <input type="password" id="pass-input" placeholder="Enter Password">
-        <button onclick="checkPass()">Access System</button>
-        <p id="error-msg" style="color:red; font-size:12px; margin-top:10px; display:none;">Invalid Password!</p>
+        <h2>Patel Diagnostic</h2>
+        <input type="password" id="pass-input" placeholder="Password">
+        <button onclick="checkPass()">Login</button>
     </div>
 </div>
 
-<div id="main-app" style="display: none;">
+<div id="main-app">
     <div id="admin-panel">
-        <h2 style="color: var(--main-blue); margin: 0 0 10px 0;">Billing Dashboard</h2>
+        <h3 style="color: var(--main-blue); margin-top:0;">Billing Control</h3>
         
         <div class="input-group">
             <label>Patient Name <span class="req">*</span></label>
             <input type="text" id="in-name" oninput="updateAll()">
         </div>
         <div class="input-group">
+            <label>Age / Sex <span class="req">*</span></label>
+            <input type="text" id="in-age" placeholder="e.g. 25/M" oninput="updateAll()">
+        </div>
+        <div class="input-group">
             <label>Contact No. <span class="req">*</span></label>
             <input type="text" id="in-phone" oninput="updateAll()">
         </div>
-        <div class="input-group">
-            <label>Bill No: <span id="bill-display"></span></label>
-            <button style="font-size:10px; padding:2px; background:#eee;" onclick="manualSync()">Change Serial</button>
-        </div>
-
+        
         <div class="manual-entry">
-            <label style="color: var(--main-blue);">+ Custom Test</label>
-            <input type="text" id="custom-name" placeholder="Test Name" style="margin-bottom:5px;">
-            <input type="number" id="custom-price" placeholder="Price (₹)">
-            <button class="action-btn" style="background:var(--main-blue); width:auto;" onclick="addCustomTest()">Add</button>
+            <label>+ Manual Test Entry</label>
+            <input type="text" id="c-name" placeholder="Test Name" style="margin-bottom:5px;">
+            <input type="number" id="c-price" placeholder="Price">
+            <button onclick="addManual()" style="margin-top:5px; background:var(--main-blue); color:white; border:none; padding:5px; width:100%; cursor:pointer;">Add Test</button>
         </div>
 
-        <label>Search Tests</label>
-        <input type="text" class="search-box" id="test-search" placeholder="Filter list..." onkeyup="filterTests()">
+        <label>Select Tests (36 Available)</label>
         <div class="test-selector" id="test-list"></div>
 
-        <button class="action-btn" style="background:var(--main-blue);" onclick="window.print()">Print Upper A4</button>
-        <button class="action-btn" style="background:#28a745;" onclick="exportPDF()">Download PDF</button>
-        <button class="action-btn" style="background:#6c757d;" onclick="location.reload()">Lock & Log Out</button>
+        <button onclick="window.print()" style="width:100%; padding:10px; margin-top:10px; background:var(--main-blue); color:white; border:none; font-weight:bold; cursor:pointer;">Print Upper A4</button>
+        <button onclick="exportPDF()" style="width:100%; padding:10px; margin-top:5px; background:#28a745; color:white; border:none; font-weight:bold; cursor:pointer;">Download PDF</button>
+
+        <div class="history-section">
+            <label>Today's Summary</label>
+            <table class="history-table">
+                <thead><tr><th>Bill No</th><th>Patient</th><th>Total</th></tr></thead>
+                <tbody id="history-body"></tbody>
+            </table>
+        </div>
+        <button onclick="location.reload()" style="margin-top:20px; font-size:10px; background:none; border:none; color:grey; cursor:pointer;">Log Out</button>
     </div>
 
     <div id="preview-area">
@@ -140,79 +136,93 @@
                 <div class="patient-box">
                     <div>
                         <p class="p-detail"><b>Patient:</b> <span id="out-name">________________</span></p>
+                        <p class="p-detail"><b>Age/Sex:</b> <span id="out-age">________________</span></p>
                         <p class="p-detail"><b>Contact:</b> <span id="out-phone">________________</span></p>
                     </div>
                     <div style="text-align: right;">
                         <p class="p-detail"><b>Bill No:</b> <span id="out-bill"></span></p>
                         <p class="p-detail"><b>Date:</b> <span id="out-date"></span></p>
+                        <p class="p-detail"><b>Ref By:</b> Self</p>
                     </div>
                 </div>
 
-                <table>
-                    <thead>
-                        <tr><th style="width:30px;">#</th><th>Investigation</th><th style="text-align:right;">Price (₹)</th></tr>
-                    </thead>
+                <table class="bill-table">
+                    <thead><tr><th style="width:30px;">#</th><th>Investigation</th><th style="text-align:right;">Price (₹)</th></tr></thead>
                     <tbody id="out-table"></tbody>
                 </table>
                 <div class="total-row">Net Payable: ₹ <span id="out-total">0.00</span></div>
-                <div class="footer">
-                    <p>* Computer generated invoice. Thank you for choosing Patel Diagnostic.</p>
-                </div>
+                <div class="footer"><p>* This is a computer-generated invoice. Thank you for choosing Patel Diagnostic.</p></div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    const MASTER_PASS = "Patel@2025"; // Change this password here
-    let customTests = [] ;
+    const MASTER_PASS = "Patel@2025";
+    let manualTests = [];
+    const db = [
+        // 11 Packages
+        {n:"Package 1 (CBC, Sugar, Lipid, LFT, KFT, Thyroid)", p:599},
+        {n:"Package 2 (CBC, Sugar, HbA1c, Chol, Trig, SGOT/PT, Uric, Creat)", p:849},
+        {n:"Package 3 (Sugar, Lipid, LFT, KFT, Thyroid)", p:899},
+        {n:"Package 4 (Pkg 3 + Urine R/M, CBC, HbA1c)", p:1379},
+        {n:"Package 5 (Pkg 4 + ESR, Vit-B12)", p:1649},
+        {n:"Package 6 (Pkg 5 + Vit-D)", p:1849},
+        {n:"Package 7 (Adv. Profile + Vit B12, Vit D, Iron)", p:2200},
+        {n:"Package 8 (Full Body + Iron, ESR, HbA1c)", p:2399},
+        {n:"Package 9 (Female Special Profile)", p:2499},
+        {n:"Package 10 (Premium Health Checkup)", p:3200},
+        {n:"Package 11 (Platinum Profile)", p:3599},
+        // 25 Individual Tests
+        {n:"Chikungunya IgM", p:600}, {n:"Complete Blood Count (CBC)", p:250},
+        {n:"Dengue Duo Screening", p:950}, {n:"Dengue IgG & IgM", p:700},
+        {n:"Electrolytes (Na/K/Cl)", p:450}, {n:"ESR Test", p:100},
+        {n:"FSH Test", p:450}, {n:"Glucose Random", p:80},
+        {n:"HBA1C Test", p:400}, {n:"Iron Studies", p:700},
+        {n:"KFT (Kidney Function)", p:600}, {n:"Lipid Profile", p:500},
+        {n:"LFT (Liver Function)", p:600}, {n:"LH Test", p:450},
+        {n:"Pancreas Profile", p:800}, {n:"Prolactin (PRL)", p:450},
+        {n:"PT INR", p:350}, {n:"Testosterone Total", p:600},
+        {n:"Thyroid Profile Total", p:400}, {n:"Troponin I", p:900},
+        {n:"Troponin T", p:1200}, {n:"Typhoid (Typhidot) IgG/MgM", p:500},
+        {n:"Urine Routine & Micro", p:150}, {n:"Vitamin B12", p:800},
+        {n:"Vitamin D", p:1000}
+    ];
 
     function checkPass() {
-        const input = document.getElementById('pass-input').value;
-        if(input === MASTER_PASS) {
+        if(document.getElementById('pass-input').value === MASTER_PASS) {
             document.getElementById('login-overlay').style.display = 'none';
             document.getElementById('main-app').style.display = 'flex';
             initApp();
-        } else {
-            document.getElementById('error-msg').style.display = 'block';
         }
     }
-
-    // Trigger login on 'Enter' key
-    document.getElementById('pass-input').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') checkPass();
-    });
 
     function initApp() {
         if(!localStorage.getItem('pdSerial')) localStorage.setItem('pdSerial', '1001');
         const list = document.getElementById('test-list');
         db.forEach(t => {
-            list.innerHTML += `<div class="test-item" data-search="${t.n.toLowerCase()}">
-                <input type="checkbox" class="t-chk" data-n="${t.n}" data-p="${t.p}" onchange="updateAll()">
-                <span>${t.n} (₹${t.p})</span>
-            </div>`;
+            list.innerHTML += `<div class="test-item"><input type="checkbox" class="t-chk" data-n="${t.n}" data-p="${t.p}" onchange="updateAll()"> <span>${t.n} (₹${t.p})</span></div>`;
         });
         updateAll();
         setInterval(() => { document.getElementById('out-date').innerText = new Date().toLocaleString('en-IN'); }, 1000);
     }
 
-    function addCustomTest() {
-        const name = document.getElementById('custom-name').value;
-        const price = document.getElementById('custom-price').value;
-        if(name && price) {
-            customTests.push({n: name, p: parseFloat(price)});
-            document.getElementById('custom-name').value = "";
-            document.getElementById('custom-price').value = "";
+    function addManual() {
+        const n = document.getElementById('c-name').value;
+        const p = document.getElementById('c-price').value;
+        if(n && p) {
+            manualTests.push({n: n, p: parseFloat(p)});
+            document.getElementById('c-name').value = "";
+            document.getElementById('c-price').value = "";
             updateAll();
         }
     }
 
     function updateAll() {
-        const serial = localStorage.getItem('pdSerial');
-        const bill = "PD-2025-" + serial;
-        document.getElementById('bill-display').innerText = bill;
+        const bill = "PD-2025-" + localStorage.getItem('pdSerial');
         document.getElementById('out-bill').innerText = bill;
         document.getElementById('out-name').innerText = document.getElementById('in-name').value || "________________";
+        document.getElementById('out-age').innerText = document.getElementById('in-age').value || "________________";
         document.getElementById('out-phone').innerText = document.getElementById('in-phone').value || "________________";
         
         let total = 0, rows = "", count = 1;
@@ -220,7 +230,7 @@
             total += parseFloat(c.dataset.p);
             rows += `<tr><td>${count++}</td><td>${c.dataset.n}</td><td style="text-align:right;">${parseFloat(c.dataset.p).toFixed(2)}</td></tr>`;
         });
-        customTests.forEach(t => {
+        manualTests.forEach(t => {
             total += t.p;
             rows += `<tr><td>${count++}</td><td>${t.n}</td><td style="text-align:right;">${t.p.toFixed(2)}</td></tr>`;
         });
@@ -230,26 +240,22 @@
 
     function exportPDF() {
         const name = document.getElementById('in-name').value || "Patient";
+        const bill = document.getElementById('out-bill').innerText;
+        const total = document.getElementById('out-total').innerText;
+        
         html2pdf().set({
-            margin: 0,
-            filename: `${name}_Bill.pdf`,
-            html2canvas: { scale: 3 },
+            margin: 0, filename: `${name}_Bill.pdf`, html2canvas: { scale: 3 },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         }).from(document.getElementById('invoice-content')).save().then(() => {
+            const hist = document.getElementById('history-body');
+            hist.innerHTML = `<tr><td>${bill}</td><td>${name}</td><td>₹${total}</td></tr>` + hist.innerHTML;
             localStorage.setItem('pdSerial', parseInt(localStorage.getItem('pdSerial')) + 1);
+            manualTests = [];
+            document.querySelectorAll('.t-chk').forEach(c => c.checked = false);
+            document.getElementById('in-name').value = "";
+            document.getElementById('in-age').value = "";
+            document.getElementById('in-phone').value = "";
             updateAll();
-        });
-    }
-
-    function manualSync() {
-        const val = prompt("Enter new starting number:");
-        if(val) { localStorage.setItem('pdSerial', val); updateAll(); }
-    }
-
-    function filterTests() {
-        let val = document.getElementById('test-search').value.toLowerCase();
-        document.querySelectorAll('.test-item').forEach(item => {
-            item.style.display = item.dataset.search.includes(val) ? "flex" : "none";
         });
     }
 </script>
