@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Patel Diagnostic - Final Secure System</title>
+    <title>Patel Diagnostic - Secure System with History</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root { --main-blue: #0b4ea2; --main-red: #d71920; }
@@ -21,21 +21,26 @@
         .input-group { margin-bottom: 10px; }
         label { display: block; font-weight: bold; font-size: 12px; margin-bottom: 3px; }
         .req { color: var(--main-red); }
-        input[type="text"], input[type="number"] { width: 100%; padding: 8px; border: 1px solid #aaa; border-radius: 4px; }
+        input[type="text"], input[type="number"], input[type="date"] { width: 100%; padding: 8px; border: 1px solid #aaa; border-radius: 4px; box-sizing: border-box; }
         
         .manual-entry { background: #f0f7ff; padding: 10px; border: 1px solid #0b4ea2; border-radius: 4px; margin: 10px 0; }
-        .test-selector { height: 200px; border: 1px solid #ccc; overflow-y: auto; padding: 10px; background: #f9f9f9; font-size: 11px; }
+        .test-selector { height: 180px; border: 1px solid #ccc; overflow-y: auto; padding: 10px; background: #f9f9f9; font-size: 11px; }
         .test-item { display: flex; align-items: center; border-bottom: 1px solid #eee; padding: 3px 0; }
         
+        /* ADMIN HISTORY & SEARCH */
         .history-section { margin-top: 20px; border-top: 2px solid #eee; padding-top: 10px; }
+        .search-row { display: flex; gap: 5px; margin-bottom: 10px; }
         .history-table { width: 100%; font-size: 11px; border-collapse: collapse; }
-        .history-table th { background: #eee; padding: 5px; text-align: left; }
+        .history-table th { background: #eee; padding: 5px; text-align: left; position: sticky; top: 0; }
         .history-table td { padding: 5px; border-bottom: 1px solid #ddd; }
+        .history-container { max-height: 200px; overflow-y: auto; border: 1px solid #ddd; }
 
+        /* PREVIEW AREA (Upper A4) */
         #preview-area { flex-grow: 1; display: flex; justify-content: center; padding: 20px; overflow-y: auto; }
         #invoice-paper { width: 210mm; height: 297mm; background: white; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
         #invoice-content { width: 100%; height: 148.5mm; padding: 10mm 15mm; box-sizing: border-box; position: relative; border-bottom: 1px dashed #ccc; }
 
+        /* BRANDING (LOCKED SVG) */
         .inv-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--main-blue); padding-bottom: 10px; }
         .logo-svg { width: 230px; }
         .lab-info { text-align: right; }
@@ -94,20 +99,28 @@
             <button onclick="addManual()" style="margin-top:5px; background:var(--main-blue); color:white; border:none; padding:5px; width:100%; cursor:pointer;">Add Test</button>
         </div>
 
-        <label>Select Tests (36 Available)</label>
+        <label>Select Tests</label>
         <div class="test-selector" id="test-list"></div>
 
         <button onclick="window.print()" style="width:100%; padding:10px; margin-top:10px; background:var(--main-blue); color:white; border:none; font-weight:bold; cursor:pointer;">Print Upper A4</button>
         <button onclick="exportPDF()" style="width:100%; padding:10px; margin-top:5px; background:#28a745; color:white; border:none; font-weight:bold; cursor:pointer;">Download PDF</button>
 
         <div class="history-section">
-            <label>Today's Summary</label>
-            <table class="history-table">
-                <thead><tr><th>Bill No</th><th>Patient</th><th>Total</th></tr></thead>
-                <tbody id="history-body"></tbody>
-            </table>
+            <label>Bill History Search</label>
+            <div class="search-row">
+                <input type="date" id="search-date">
+                <button onclick="searchBills()" style="padding:5px; cursor:pointer;">Search</button>
+                <button onclick="renderHistory()" style="padding:5px; cursor:pointer;">Reset</button>
+            </div>
+            <div class="history-container">
+                <table class="history-table">
+                    <thead><tr><th>Date</th><th>Bill</th><th>Patient</th><th>Total</th></tr></thead>
+                    <tbody id="history-body"></tbody>
+                </table>
+            </div>
         </div>
-        <button onclick="location.reload()" style="margin-top:20px; font-size:10px; background:none; border:none; color:grey; cursor:pointer;">Log Out</button>
+        
+        <button onclick="location.reload()" style="margin-top:20px; font-size:10px; background:none; border:none; color:grey; cursor:pointer;">Log Out & Exit</button>
     </div>
 
     <div id="preview-area">
@@ -151,7 +164,7 @@
                     <tbody id="out-table"></tbody>
                 </table>
                 <div class="total-row">Net Payable: ₹ <span id="out-total">0.00</span></div>
-                <div class="footer"><p>* This is a computer-generated invoice. Thank you for choosing Patel Diagnostic.</p></div>
+                <div class="footer"><p>* Computer-generated invoice. No signature required.</p></div>
             </div>
         </div>
     </div>
@@ -161,7 +174,6 @@
     const MASTER_PASS = "Patel@2025";
     let manualTests = [];
     const db = [
-        // 11 Packages
         {n:"Package 1 (CBC, Sugar, Lipid, LFT, KFT, Thyroid)", p:599},
         {n:"Package 2 (CBC, Sugar, HbA1c, Chol, Trig, SGOT/PT, Uric, Creat)", p:849},
         {n:"Package 3 (Sugar, Lipid, LFT, KFT, Thyroid)", p:899},
@@ -173,7 +185,6 @@
         {n:"Package 9 (Female Special Profile)", p:2499},
         {n:"Package 10 (Premium Health Checkup)", p:3200},
         {n:"Package 11 (Platinum Profile)", p:3599},
-        // 25 Individual Tests
         {n:"Chikungunya IgM", p:600}, {n:"Complete Blood Count (CBC)", p:250},
         {n:"Dengue Duo Screening", p:950}, {n:"Dengue IgG & IgM", p:700},
         {n:"Electrolytes (Na/K/Cl)", p:450}, {n:"ESR Test", p:100},
@@ -199,11 +210,13 @@
 
     function initApp() {
         if(!localStorage.getItem('pdSerial')) localStorage.setItem('pdSerial', '1001');
+        if(!localStorage.getItem('pdHistory')) localStorage.setItem('pdHistory', '[]');
         const list = document.getElementById('test-list');
         db.forEach(t => {
             list.innerHTML += `<div class="test-item"><input type="checkbox" class="t-chk" data-n="${t.n}" data-p="${t.p}" onchange="updateAll()"> <span>${t.n} (₹${t.p})</span></div>`;
         });
         updateAll();
+        renderHistory();
         setInterval(() => { document.getElementById('out-date').innerText = new Date().toLocaleString('en-IN'); }, 1000);
     }
 
@@ -242,21 +255,45 @@
         const name = document.getElementById('in-name').value || "Patient";
         const bill = document.getElementById('out-bill').innerText;
         const total = document.getElementById('out-total').innerText;
+        const dateObj = new Date();
+        const dateStr = dateObj.toISOString().split('T')[0]; // YYYY-MM-DD
         
         html2pdf().set({
             margin: 0, filename: `${name}_Bill.pdf`, html2canvas: { scale: 3 },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         }).from(document.getElementById('invoice-content')).save().then(() => {
-            const hist = document.getElementById('history-body');
-            hist.innerHTML = `<tr><td>${bill}</td><td>${name}</td><td>₹${total}</td></tr>` + hist.innerHTML;
+            // Save to Local History
+            let history = JSON.parse(localStorage.getItem('pdHistory'));
+            history.unshift({ date: dateStr, bill: bill, patient: name, total: total });
+            localStorage.setItem('pdHistory', JSON.stringify(history));
+            
+            // Increment Serial
             localStorage.setItem('pdSerial', parseInt(localStorage.getItem('pdSerial')) + 1);
+            
+            // Clear inputs
             manualTests = [];
             document.querySelectorAll('.t-chk').forEach(c => c.checked = false);
             document.getElementById('in-name').value = "";
             document.getElementById('in-age').value = "";
             document.getElementById('in-phone').value = "";
+            
             updateAll();
+            renderHistory();
         });
+    }
+
+    function renderHistory(data = null) {
+        const history = data || JSON.parse(localStorage.getItem('pdHistory')) || [];
+        const body = document.getElementById('history-body');
+        body.innerHTML = history.map(h => `<tr><td>${h.date}</td><td>${h.bill}</td><td>${h.patient}</td><td>₹${h.total}</td></tr>`).join('');
+    }
+
+    function searchBills() {
+        const searchDate = document.getElementById('search-date').value;
+        if(!searchDate) return;
+        const history = JSON.parse(localStorage.getItem('pdHistory'));
+        const filtered = history.filter(h => h.date === searchDate);
+        renderHistory(filtered);
     }
 </script>
 </body>
