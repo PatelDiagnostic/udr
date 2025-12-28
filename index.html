@@ -1,276 +1,257 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=1200">
-    <title>Patel Diagnosis Udaipur: The Royal Standard of Home Diagnostics</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    
+    <meta charset="UTF-8">
+    <title>Patel Diagnostic - Secure Billing</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        * { box-sizing: border-box; } 
-
-        :root {
-            --color-primary-blue: #0A1931; 
-            --color-secondary-gold: #FFD700; 
-            --color-text-light: #F0F0F0;
-            --color-text-dark: #333;
-            --color-background-offwhite: #FFFFFF;
-            --color-background-section: #F8F8F8;
-            --font-title: 'Playfair Display', serif;
-            --font-body: 'Poppins', sans-serif;
+        :root { --main-blue: #0b4ea2; --main-red: #d71920; }
+        body { font-family: 'Arial', sans-serif; margin: 0; background: #525659; color: #333; overflow: hidden; }
+        
+        /* LOGIN OVERLAY */
+        #login-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--main-blue); display: flex; justify-content: center; align-items: center;
+            z-index: 9999; transition: 0.5s;
         }
+        .login-box {
+            background: white; padding: 40px; border-radius: 8px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); width: 320px;
+        }
+        .login-box h2 { color: var(--main-blue); margin-bottom: 20px; }
+        .login-box input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .login-box button { width: 100%; padding: 12px; background: var(--main-red); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
 
-        body { font-family: var(--font-body); margin: 0; padding: 0; color: var(--color-text-dark); background-color: var(--color-background-offwhite); line-height: 1.6; }
-        h1, h2, h3 { font-family: var(--font-title); color: var(--color-primary-blue); line-height: 1.2; }
+        /* MAIN APP LAYOUT */
+        #main-app { display: none; height: 100vh; }
+        #admin-panel { width: 400px; background: #ffffff; padding: 15px; border-right: 1px solid #ccc; overflow-y: auto; height: 100vh; box-sizing: border-box; }
+        .input-group { margin-bottom: 10px; }
+        label { display: block; font-weight: bold; font-size: 12px; margin-bottom: 3px; }
+        .req { color: var(--main-red); }
+        input[type="text"], input[type="number"], .search-box { width: 100%; padding: 8px; border: 1px solid #aaa; border-radius: 4px; box-sizing: border-box; }
         
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .manual-entry { background: #f0f7ff; padding: 10px; border: 1px solid #0b4ea2; border-radius: 4px; margin: 10px 0; }
+        .test-selector { height: 200px; border: 1px solid #ccc; overflow-y: auto; padding: 10px; background: #f9f9f9; }
+        .test-item { display: flex; align-items: center; margin-bottom: 5px; font-size: 12px; border-bottom: 1px solid #eee; }
         
-        .header-sticky { position: sticky; top: 0; background-color: var(--color-background-offwhite); z-index: 1000; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .top-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; }
-        
-        .logo-container { font-weight: bold; }
-        .patel-diagnosis-name { font-size: 1.7em; font-weight: 900; } 
-        .patel-diagnosis-blue { color: var(--color-primary-blue); }
-        .udaipur-red { color: #8A0000; margin-left: 5px; }
-        
-        nav { display: block; border-top: 1px solid #eee; }
-        nav ul { list-style: none; padding: 0; margin: 0; display: flex; justify-content: center; }
-        nav ul li a { text-decoration: none; color: var(--color-primary-blue); font-weight: 600; padding: 15px 25px; display: block; transition: all 0.3s; }
-        nav ul li a:hover { background-color: var(--color-primary-blue); color: var(--color-secondary-gold); }
-        
-        .cta-button, .primary-cta-large { background-color: var(--color-secondary-gold); color: var(--color-primary-blue); padding: 12px 25px; text-decoration: none; border-radius: 50px; font-weight: 700; display: inline-block; margin-top: 20px; transition: all 0.3s ease; border: 2px solid var(--color-secondary-gold); box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
-        .cta-button:hover, .primary-cta-large:hover { background-color: var(--color-primary-blue); color: var(--color-secondary-gold); border-color: var(--color-secondary-gold); transform: translateY(-2px); }
-        
-        .compartment { padding: 80px 0; border-bottom: 1px solid #eee; }
-        #home { text-align: center; background-color: #fff; }
-        #tests, #packages, #service-areas { background-color: var(--color-background-section); }
+        button.action-btn { width: 100%; padding: 10px; margin-top: 8px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; color: white; }
 
-        .home-grid { display: flex; justify-content: space-around; margin-top: 50px; gap: 40px; }
-        .home-grid > div { background-color: var(--color-background-offwhite); padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: left; flex: 1; min-width: 300px; border-top: 4px solid var(--color-secondary-gold); }
-        .home-grid ul { list-style-type: none; padding-left: 0; }
-        .home-grid ul li { margin-bottom: 10px; padding-left: 20px; position: relative; }
-        .home-grid ul li::before { content: '★'; color: var(--color-secondary-gold); position: absolute; left: 0; }
-        
-        .table-responsive { overflow-x: auto; margin-top: 40px; }
-        .test-catalog, .packages-table { width: 100%; min-width: 600px; border-collapse: separate; border-spacing: 0; background-color: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
-        .test-catalog th, .packages-table th { background-color: var(--color-primary-blue); color: #fff; padding: 15px; text-align: left; }
-        .test-catalog td, .packages-table td { border-bottom: 1px solid #eee; padding: 15px; }
-        
-        .original-price { text-decoration: line-through; color: #888; font-size: 0.85em; margin-right: 10px; }
-        .selling-price { color: #28a745; font-weight: bold; font-size: 1.2em; }
-        
-        .enquiry-container { background-color: #e0f7fa; border: 2px solid #2196f3; padding: 25px; border-radius: 8px; max-width: 900px; margin: 40px auto; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
-        .form-fields { display: flex; gap: 15px; align-items: flex-end; }
-        .form-group { flex: 1; min-width: 200px; }
-        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #b3e5fc; border-radius: 4px; }
-        .submit-btn { background-color: #4caf50; color: white; border: none; padding: 12px 25px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        /* PREVIEW AREA */
+        #preview-area { flex-grow: 1; display: flex; justify-content: center; padding: 20px; overflow-y: auto; width: 100%; }
+        #invoice-paper { width: 210mm; height: 297mm; background: white; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        #invoice-content { width: 100%; height: 148.5mm; padding: 10mm 15mm; box-sizing: border-box; position: relative; border-bottom: 1px dashed #ccc; }
 
-        footer { background-color: var(--color-primary-blue); color: #fff; padding: 30px 0; text-align: center; }
+        /* BRANDING (LOCKED SVG) */
+        .inv-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--main-blue); padding-bottom: 10px; }
+        .logo-svg { width: 230px; }
+        .lab-info { text-align: right; }
+        .lab-info h3 { margin: 0; color: var(--main-red); font-size: 14px; }
+        .lab-info p { margin: 1px 0; font-size: 11px; font-weight: bold; }
+        
+        .patient-box { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 10px; margin: 15px 0; padding: 10px; border: 1px solid #333; }
+        .p-detail { font-size: 13px; margin: 2px 0; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th { background: var(--main-blue); color: white; padding: 6px; text-align: left; font-size: 12px; }
+        td { padding: 6px; border: 1px solid #eee; font-size: 12px; }
+        .total-row { margin-top: 10px; text-align: right; border-top: 2px solid #000; padding-top: 5px; font-size: 16px; font-weight: bold; color: var(--main-blue); }
+        .footer { position: absolute; bottom: 8mm; width: calc(100% - 30mm); text-align: center; font-size: 9px; border-top: 1px solid #ddd; }
+
+        @media print {
+            #login-overlay, #admin-panel { display: none; }
+            #main-app { display: block; }
+            #preview-area { padding: 0; }
+            #invoice-paper { box-shadow: none; }
+            #invoice-content { border-bottom: none; }
+        }
     </style>
 </head>
 <body>
 
-    <header class="header-sticky">
-        <div class="container">
-            <div class="top-row">
-                <div class="logo-container">
-                    <span class="patel-diagnosis-blue patel-diagnosis-name">Patel Diagnostic</span><span class="udaipur-red patel-diagnosis-name">Udaipur</span>
-                </div>
-                <a href="https://wa.me/918209746239?text=Hello,%20I%20would%20like%20to%20book%20a%20home%20blood%20collection%20service%20in%20Udaipur." class="cta-button" target="_blank">Book Via WhatsApp (8209746239)</a>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#tests">Tests &amp; Prices</a></li>
-                    <li><a href="#packages">Health Packages</a></li>
-                    <li><a href="#service-areas">Service Area</a></li>
-                    <li><a href="#about-us">Our Promise</a></li>
-                    <li><a href="#contact-us">Contact</a></li>
-                </ul>
-            </nav>
+<div id="login-overlay">
+    <div class="login-box">
+        <div style="width: 100px; margin: 0 auto 15px;">
+             <svg viewBox="0 0 24 24" fill="var(--main-blue)" width="50"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
         </div>
-    </header>
-    
-    <main>
-    <section id="home" class="compartment">
-        <div class="container">
-            <h1>The Royal Standard of Home Diagnostics in Udaipur.</h1>
-            <p>Experience the ultimate convenience of Free Home Blood Collection in the City of Lakes. Accurate, quick, and trusted service delivered right to your doorstep by</p>
-            <p><strong>Patel Diagnostic Udaipur</strong></p>
-            <img src="./online_viewer_net (1)_files/PATEL.PNG" alt="Patel">
-            <br>
-            <a href="https://wa.me/918209746239" class="primary-cta-large" target="_blank">BOOK YOUR FREE HOME COLLECTION NOW (8209746239)</a>
-            
-            <div class="home-grid">
-                <div>
-                    <h3>✅ Why Choose Us?</h3>
-                    <ul>
-                        <li>Udaipur’s Local Partner: Serving the City of Lakes with dedicated care.</li>
-                        <li>Quality Assurance: Tests processed under the protocols of Redcliffe Labs.</li>
-                        <li>Affordable Prices: Guaranteed best value on all individual tests and packages.</li>
-                        <li>Free Home Collection Available for your convenience.</li>
-                    </ul>
-                </div>
-                <div>
-                    <h3>🚀 How It Works in 3 Steps</h3>
-                    <ol style="list-style-position: inside; padding-left: 0; text-align: left;">
-                        <li style="margin-bottom: 10px; font-weight: 600;">Book Online: Select your test or package and schedule via WhatsApp or Call.</li>
-                        <li style="margin-bottom: 10px; font-weight: 600;">Home Collection: Our expert phlebotomist visits you at your preferred time.</li>
-                        <li style="margin-bottom: 10px; font-weight: 600;">Get Reports: Receive fast, secure digital reports directly to your email.</li>
-                    </ol>
-                </div>
-            </div>
-        </div>
-    </section>
+        <h2>Lab Login</h2>
+        <input type="password" id="pass-input" placeholder="Enter Password">
+        <button onclick="checkPass()">Access System</button>
+        <p id="error-msg" style="color:red; font-size:12px; margin-top:10px; display:none;">Invalid Password!</p>
+    </div>
+</div>
 
-    <section id="tests" class="compartment">
-        <div class="container">
-            <h2>🔬 Individual Lab Tests</h2>
-            <div class="table-responsive">
-                <table class="test-catalog">
+<div id="main-app" style="display: none;">
+    <div id="admin-panel">
+        <h2 style="color: var(--main-blue); margin: 0 0 10px 0;">Billing Dashboard</h2>
+        
+        <div class="input-group">
+            <label>Patient Name <span class="req">*</span></label>
+            <input type="text" id="in-name" oninput="updateAll()">
+        </div>
+        <div class="input-group">
+            <label>Contact No. <span class="req">*</span></label>
+            <input type="text" id="in-phone" oninput="updateAll()">
+        </div>
+        <div class="input-group">
+            <label>Bill No: <span id="bill-display"></span></label>
+            <button style="font-size:10px; padding:2px; background:#eee;" onclick="manualSync()">Change Serial</button>
+        </div>
+
+        <div class="manual-entry">
+            <label style="color: var(--main-blue);">+ Custom Test</label>
+            <input type="text" id="custom-name" placeholder="Test Name" style="margin-bottom:5px;">
+            <input type="number" id="custom-price" placeholder="Price (₹)">
+            <button class="action-btn" style="background:var(--main-blue); width:auto;" onclick="addCustomTest()">Add</button>
+        </div>
+
+        <label>Search Tests</label>
+        <input type="text" class="search-box" id="test-search" placeholder="Filter list..." onkeyup="filterTests()">
+        <div class="test-selector" id="test-list"></div>
+
+        <button class="action-btn" style="background:var(--main-blue);" onclick="window.print()">Print Upper A4</button>
+        <button class="action-btn" style="background:#28a745;" onclick="exportPDF()">Download PDF</button>
+        <button class="action-btn" style="background:#6c757d;" onclick="location.reload()">Lock & Log Out</button>
+    </div>
+
+    <div id="preview-area">
+        <div id="invoice-paper">
+            <div id="invoice-content">
+                <div class="inv-header">
+                    <div class="logo-svg">
+                        <svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="300" cy="150" r="120" fill="none" stroke="#1da1f2" stroke-width="10"/>
+                            <circle cx="300" cy="150" r="135" fill="none" stroke="#1da1f2" stroke-width="4"/>
+                            <circle cx="300" cy="150" r="105" fill="none" stroke="#1da1f2" stroke-width="4"/>
+                            <rect x="90" y="120" rx="12" ry="12" width="420" height="60" fill="#ffffff"/>
+                            <text x="300" y="162" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="40" font-weight="900">
+                                <tspan fill="#0b4ea2">Patel Diagnostic </tspan>
+                                <tspan fill="#d71920">Udaipur</tspan>
+                            </text>
+                        </svg>
+                    </div>
+                    <div class="lab-info">
+                        <h3>Home Blood Collection</h3>
+                        <p>8209746239</p>
+                        <p>Udaipur, Rajasthan</p>
+                    </div>
+                </div>
+
+                <div class="patient-box">
+                    <div>
+                        <p class="p-detail"><b>Patient:</b> <span id="out-name">________________</span></p>
+                        <p class="p-detail"><b>Contact:</b> <span id="out-phone">________________</span></p>
+                    </div>
+                    <div style="text-align: right;">
+                        <p class="p-detail"><b>Bill No:</b> <span id="out-bill"></span></p>
+                        <p class="p-detail"><b>Date:</b> <span id="out-date"></span></p>
+                    </div>
+                </div>
+
+                <table>
                     <thead>
-                        <tr><th>Test Name</th><th>Original Price</th><th>Our Price</th><th>Action</th></tr>
+                        <tr><th style="width:30px;">#</th><th>Investigation</th><th style="text-align:right;">Price (₹)</th></tr>
                     </thead>
-                    <tbody>
-                        <tr><td>Complete Blood Count (CBC)</td><td class="original-price">₹350.00</td><td class="selling-price">₹249.00</td><td><a href="https://wa.me/918209746239?text=Hello,%20I%20want%20to%20book%20CBC%20Test." class="cta-button">Book</a></td></tr>
-                        <tr><td>Kidney Function Test (KFT)</td><td class="original-price">₹500.00</td><td class="selling-price">₹399.00</td><td><a href="https://wa.me/918209746239?text=Hello,%20I%20want%20to%20book%20KFT%20Test." class="cta-button">Book</a></td></tr>
-                        <tr><td>Liver Function Test (LFT)</td><td class="original-price">₹500.00</td><td class="selling-price">₹399.00</td><td><a href="https://wa.me/918209746239?text=Hello,%20I%20want%20to%20book%20LFT%20Test." class="cta-button">Book</a></td></tr>
-                        <tr><td>Lipid Profile</td><td class="original-price">₹500.00</td><td class="selling-price">₹399.00</td><td><a href="https://wa.me/918209746239?text=Hello,%20I%20want%20to%20book%20Lipid%20Profile." class="cta-button">Book</a></td></tr>
-                        <tr><td>HbA1c (Diabetes Monitor)</td><td class="original-price">₹450.00</td><td class="selling-price">₹349.00</td><td><a href="https://wa.me/918209746239?text=Hello,%20I%20want%20to%20book%20HbA1c%20Test." class="cta-button">Book</a></td></tr>
-                        <tr><td>Vitamin D</td><td class="original-price">₹650.00</td><td class="selling-price">₹599.00</td><td><a href="https://wa.me/918209746239?text=Hello,%20I%20want%20to%20book%20Vitamin%20D%20Test." class="cta-button">Book</a></td></tr>
-                        <tr><td>Iron Studies</td><td class="original-price">₹550.00</td><td class="selling-price">₹499.00</td><td><a href="https://wa.me/918209746239?text=Hello,%20I%20want%20to%20book%20Iron%20Studies." class="cta-button">Book</a></td></tr>
-                        <tr><td>HIV, HCV, HBsAg Panel</td><td class="original-price">₹950.00</td><td class="selling-price">₹499.00</td><td><a href="https://wa.me/918209746239?text=Hello,%20I%20want%20to%20book%20HIV%20HCV%20Panel." class="cta-button">Book</a></td></tr>
-                        <tr><td>Urine Complete</td><td class="original-price">₹249.00</td><td class="selling-price">₹149.00</td><td><a href="https://wa.me/918209746239?text=Hello,%20I%20want%20to%20book%20Urine%20Complete%20Test." class="cta-button">Book</a></td></tr>
-                        <tr><td>Blood Group</td><td class="original-price">₹180.00</td><td class="selling-price">₹149.00</td><td><a href="https://wa.me/918209746239?text=Hello,%20I%20want%20to%20book%20Blood%20Group%20Test." class="cta-button">Book</a></td></tr>
-                        <tr><td>Vitamin B12</td><td class="original-price">₹600.00</td><td class="selling-price">₹549.00</td><td><a href="https://wa.me/918209746239?text=Hello,%20I%20want%20to%20book%20Vitamin%20B12%20Test." class="cta-button">Book</a></td></tr>
-                        <tr><td>Thyroid Profile</td><td class="original-price">₹500.00</td><td class="selling-price">₹449.00</td><td><a href="https://wa.me/918209746239?text=Hello,%20I%20want%20to%20book%20Thyroid%20Profile." class="cta-button">Book</a></td></tr>
-                        <tr><td>Other Test</td><td class="original-price">Regular Price</td><td class="selling-price">-10%</td><td><a href="https://wa.me/918209746239?text=Hello,%20I%20want%20to%20inquire%20about%20a%20test." class="cta-button">Book</a></td></tr>
-                    </tbody>
+                    <tbody id="out-table"></tbody>
                 </table>
-            </div>
-        </div>
-    </section>
-
-    <section id="packages" class="compartment">
-        <div class="container">
-            <h2>🎁 Exclusive Health Packages (Sorted Low to High Price)</h2>
-            <div class="table-responsive">
-                <table class="packages-table">
-                    <thead>
-                        <tr><th>Package No.</th><th>Included Tests</th><th>Original Price</th><th>Our Price</th><th>Action</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>Health Package 1</td><td>Sugar Random, Lipid Profile, LFT, KFT, Thyroid</td><td class="original-price">₹1678.00</td><td class="selling-price">₹899</td><td><a href="https://wa.me/918209746239?text=Hello,%20I%20would%20like%20to%20book%20Health%20Package%201%20(₹899)." class="cta-button">Book</a></td></tr>
-                        <tr><td>Health Package 2</td><td>Package 1 + Urine Complete, CBC, HbA1c</td><td class="original-price">₹2336.00</td><td class="selling-price">₹1379</td><td><a href="https://wa.me/918209746239?text=Hello,%20I%20would%20like%20to%20book%20Health%20Package%202%20(₹1379)." class="cta-button">Book</a></td></tr>
-                        <tr><td>Health Package 3</td><td>Package 1 + Urine Complete, CBC, ESR, Vitamin B12</td><td class="original-price">₹2716.00</td><td class="selling-price">₹1649</td><td><a href="https://wa.me/918209746239?text=Hello,%20I%20would%20like%20to%20book%20Health%20Package%203%20(₹1649)." class="cta-button">Book</a></td></tr>
-                        <tr><td>Health Package 4</td><td>Package 1 + Urine Complete, CBC, ESR, Vitamin D</td><td class="original-price">₹2816.00</td><td class="selling-price">₹1849</td><td><a href="https://wa.me/918209746239?text=Hello,%20I%20would%20like%20to%20book%20Health%20Package%204%20(₹1849)." class="cta-button">Book</a></td></tr>
-                        <tr><td>Health Package 5</td><td>CBC, ESR, HbA1c, KFT, LFT, Lipid Profile, Vit D, Vit B12, Iron Studies</td><td class="original-price">₹4150.00</td><td class="selling-price">₹2199</td><td><a href="https://wa.me/918209746239?text=Hello,%20I%20would%20like%20to%20book%20Health%20Package%205%20(₹2199)." class="cta-button">Book</a></td></tr>
-                        <tr><td>Health Package 6</td><td>CBC, ESR, HbA1c, KFT, LFT, Lipid Profile, Vit D, Vit B12, Thyroid, Calcium, Uric Acid</td><td class="original-price">₹4280.00</td><td class="selling-price">₹2299</td><td><a href="https://wa.me/918209746239?text=Hello,%20I%20would%20like%20to%20book%20Health%20Package%206%20(₹2299)." class="cta-button">Book</a></td></tr>
-                        <tr><td>Health Package 7</td><td>CBC, ESR, HbA1c, KFT, LFT, Lipid Profile, Vit D, Vit B12, Thyroid, Iron Studies, Urine</td><td class="original-price">₹4214.00</td><td class="selling-price">₹2399</td><td><a href="https://wa.me/918209746239?text=Hello,%20I%20would%20like%20to%20book%20Health%20Package%207%20(₹2399)." class="cta-button">Book</a></td></tr>
-                        <tr><td>Health Package 8</td><td>Package 7 + CRP, RF Factor, IgE Total</td><td class="original-price">₹8600.00</td><td class="selling-price">₹2799</td><td><a href="https://wa.me/918209746239?text=Hello,%20I%20would%20like%20to%20book%20Health%20Package%208%20(₹2799)." class="cta-button">Book</a></td></tr>
-                        <tr><td>Health Package 9</td><td>Package 7 + RA Factor, IgE, Folic Acid, CRP</td><td class="original-price">₹8100.00</td><td class="selling-price">₹3599</td><td><a href="https://wa.me/918209746239?text=Hello,%20I%20would%20like%20to%20book%20Health%20Package%209%20(₹3599)." class="cta-button">Book</a></td></tr>
-                    </tbody>
-                </table>
-            </div>
-            
-            <div class="enquiry-container">
-                <h2 style="text-align: center; color: #0d47a1;">Fill The Form For More Inquiry</h2>
-                <form onsubmit="sendToWhatsApp(event)" class="form-fields">
-                    <div class="form-group"><label>Name</label><input type="text" id="user-name" required placeholder="Your Name"></div>
-                    <div class="form-group"><label>Contact No.</label><input type="tel" id="user-phone" required placeholder="8209746239"></div>
-                    <div class="form-group"><label>Message</label><textarea id="user-message" required placeholder="Enter Your Message"></textarea></div>
-                    <button type="submit" class="submit-btn">Submit</button>
-                </form>
-            </div>
-        </div>
-    </section>
-
-    <section id="service-areas" class="compartment">
-        <div class="container">
-            <h2>📍 Service Area</h2>
-            <div class="home-grid">
-                <div>
-                    <h3>Walled City (Heritage Areas)</h3>
-                    <p>Jagdish Chowk, Lal Ghat, Gangaur Ghat, Chandpole, Brahmpuri, Silawatwari, Gadiya Devra, Nada Khada, Teliwara, Bohrwadi, Bhatiyani Chohatta, Rao Ji Ka Hata.</p>
-                </div>
-                <div>
-                    <h3>Central & Commercial Hubs</h3>
-                    <p>Surajpole, Udiapole, Hathipole, Delhi Gate, Chetak Circle, Court Choraha, Bapu Bazar, Shakti Nagar, Town Hall Area, Shastri Circle.</p>
-                </div>
-            </div>
-            <div class="home-grid">
-                <div>
-                    <h3>Modern Residential Areas</h3>
-                    <p>Hiran Magri (Sectors 1 to 14), Shobhagpura, New Bhupalpura, Old Bhupalpura, Ashok Nagar, Fatehpura, Panchwati, Saheli Nagar, Madhuban, Meera Nagar, Navratna Complex, Chitrakoot Nagar, University Road, Ganpati Nagar, Keshav Nagar, Adarsh Nagar, Subhash Nagar, Ganesh Nagar.</p>
-                </div>
-                <div>
-                    <h3>Outskirts & Extensions</h3>
-                    <p>Bhuwana, Sukher, Bedla, Badi, Hawala, Lakhawali, Tiger Hills, Badgaon, Pratap Nagar, Savina, Goverdhan Vilas, Balicha, Titardi, Umarda, Debari, Kaladwas, Malla Talai, Ambamata, Haridas Ji Ki Magri, Rampura.</p>
-                </div>
-            </div>
-            <div class="home-grid">
-                <div style="flex: 100%;">
-                    <h3>Rural & Greater Udaipur Belts</h3>
-                    <p>Alsigarh, Ubeshwar Ji, Nandeshwar, Kailashpuri (Eklingji), Sisarma, Kavita Village, Amberi, Pai, Jhadol, Gogunda, Mavli, Vallabhnagar, Bhinder, Kherwara, Rishabhdeo, Salumbar, Sarada, Zawar Mines, Dabok (Airport Area), Sakroda, Gudli, Kurabad, Semari, Sayra, Fatehnagar.</p>
+                <div class="total-row">Net Payable: ₹ <span id="out-total">0.00</span></div>
+                <div class="footer">
+                    <p>* Computer generated invoice. Thank you for choosing Patel Diagnostic.</p>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</div>
 
-    <section id="about-us" class="compartment">
-        <div class="container" style="text-align: center;">
-            <h2>👨‍⚕️ Your Local Partner for Trusted Diagnostics in Udaipur</h2>
-            <p><strong>Patel Diagnostic Udaipur</strong> was founded with a clear mission: to make high-quality, reliable lab testing accessible and convenient for every resident of the City of Lakes. We specialize in prompt and professional Home Blood Collection Services.</p>
-            <div style="max-width: 800px; margin: 30px auto; padding: 30px; background-color: #f0f4f9; border-left: 5px solid #0A1931; border-radius: 5px; text-align: left;">
-                <h3 style="margin-top: 0;">Our Commitment to Quality</h3>
-                <p>We operate under stringent protocols, ensuring every report is accurate and trustworthy. Our commitment is strengthened by our official partnership with Redcliffe Labs, leveraging their advanced testing infrastructure to deliver world-class accuracy right here in Udaipur.</p>
-            </div>
-            <a href="#contact-us" class="primary-cta-large">Connect with Our Team</a>
-        </div>
-    </section>
+<script>
+    const MASTER_PASS = "Patel@2025"; // Change this password here
+    let customTests = [] ;
 
-    <section id="contact-us" class="compartment">
-        <div class="container" style="text-align: center;">
-            <h2>📞 Connect with Patel Diagnostic Udaipur</h2>
-            <p>We are committed to providing reliable and timely diagnostic services right here in Udaipur.</p>
-            <div style="margin-top: 30px; text-align: left; display: inline-block;">
-                <p><strong>Primary Contact (Call/WhatsApp):</strong> <a href="tel:+918209746239">8209746239</a></p>
-                <p><strong>Secondary Contact (Call/WhatsApp):</strong> <a href="tel:+917733023857">7733023857</a></p>
-                <p><strong>Follow Us on Instagram:</strong> <a href="https://www.instagram.com/patel_diagnostic_udaipur?igsh=MThhZ3p2dTVldHl2eg==" target="_blank">@patel_diagnostic_udaipur</a></p>
-                <p><strong>Our Location:</strong> Titaradi Near St.Marry School, Udaipur, Rajasthan</p>
-                <p><strong>Service Area:</strong> Free Home Collection across all major areas of Udaipur.</p>
-            </div>
-            <div class="map-container" style="margin-top: 40px;">
-                <img src="https://via.placeholder.com/600x300.png?text=Map+to+Titaradi+Location" alt="Map" style="width: 100%; max-width: 600px; border-radius: 5px; border: 1px solid #ddd;">
-                <p style="margin-top: 10px; font-size: 0.9em;">Click the map above for directions to our Titaradi location.</p>
-            </div>
-        </div>
-    </section>
-    </main>
-
-    <footer>
-        <p>© 2025 Patel Diagnostic Udaipur. All Rights Reserved. | Partnered with Redcliffe Labs.</p>
-    </footer>
-
-    <script>
-        function sendToWhatsApp(event) {
-            event.preventDefault();
-            
-            var name = document.getElementById('user-name').value;
-            var phone = document.getElementById('user-phone').value;
-            var message = document.getElementById('user-message').value;
-            
-            var whatsappNumber = "918209746239";
-            
-            var text = "Hello Patel Diagnostic Udaipur,%0A%0A" + 
-                       "I have a new inquiry:%0A" +
-                       "*Name:* " + encodeURIComponent(name) + "%0A" +
-                       "*Contact:* " + encodeURIComponent(phone) + "%0A" +
-                       "*Message:* " + encodeURIComponent(message);
-            
-            var url = "https://wa.me/" + whatsappNumber + "?text=" + text;
-            window.open(url, '_blank');
+    function checkPass() {
+        const input = document.getElementById('pass-input').value;
+        if(input === MASTER_PASS) {
+            document.getElementById('login-overlay').style.display = 'none';
+            document.getElementById('main-app').style.display = 'flex';
+            initApp();
+        } else {
+            document.getElementById('error-msg').style.display = 'block';
         }
-    </script>
+    }
+
+    // Trigger login on 'Enter' key
+    document.getElementById('pass-input').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') checkPass();
+    });
+
+    function initApp() {
+        if(!localStorage.getItem('pdSerial')) localStorage.setItem('pdSerial', '1001');
+        const list = document.getElementById('test-list');
+        db.forEach(t => {
+            list.innerHTML += `<div class="test-item" data-search="${t.n.toLowerCase()}">
+                <input type="checkbox" class="t-chk" data-n="${t.n}" data-p="${t.p}" onchange="updateAll()">
+                <span>${t.n} (₹${t.p})</span>
+            </div>`;
+        });
+        updateAll();
+        setInterval(() => { document.getElementById('out-date').innerText = new Date().toLocaleString('en-IN'); }, 1000);
+    }
+
+    function addCustomTest() {
+        const name = document.getElementById('custom-name').value;
+        const price = document.getElementById('custom-price').value;
+        if(name && price) {
+            customTests.push({n: name, p: parseFloat(price)});
+            document.getElementById('custom-name').value = "";
+            document.getElementById('custom-price').value = "";
+            updateAll();
+        }
+    }
+
+    function updateAll() {
+        const serial = localStorage.getItem('pdSerial');
+        const bill = "PD-2025-" + serial;
+        document.getElementById('bill-display').innerText = bill;
+        document.getElementById('out-bill').innerText = bill;
+        document.getElementById('out-name').innerText = document.getElementById('in-name').value || "________________";
+        document.getElementById('out-phone').innerText = document.getElementById('in-phone').value || "________________";
+        
+        let total = 0, rows = "", count = 1;
+        document.querySelectorAll('.t-chk:checked').forEach(c => {
+            total += parseFloat(c.dataset.p);
+            rows += `<tr><td>${count++}</td><td>${c.dataset.n}</td><td style="text-align:right;">${parseFloat(c.dataset.p).toFixed(2)}</td></tr>`;
+        });
+        customTests.forEach(t => {
+            total += t.p;
+            rows += `<tr><td>${count++}</td><td>${t.n}</td><td style="text-align:right;">${t.p.toFixed(2)}</td></tr>`;
+        });
+        document.getElementById('out-table').innerHTML = rows;
+        document.getElementById('out-total').innerText = total.toFixed(2);
+    }
+
+    function exportPDF() {
+        const name = document.getElementById('in-name').value || "Patient";
+        html2pdf().set({
+            margin: 0,
+            filename: `${name}_Bill.pdf`,
+            html2canvas: { scale: 3 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        }).from(document.getElementById('invoice-content')).save().then(() => {
+            localStorage.setItem('pdSerial', parseInt(localStorage.getItem('pdSerial')) + 1);
+            updateAll();
+        });
+    }
+
+    function manualSync() {
+        const val = prompt("Enter new starting number:");
+        if(val) { localStorage.setItem('pdSerial', val); updateAll(); }
+    }
+
+    function filterTests() {
+        let val = document.getElementById('test-search').value.toLowerCase();
+        document.querySelectorAll('.test-item').forEach(item => {
+            item.style.display = item.dataset.search.includes(val) ? "flex" : "none";
+        });
+    }
+</script>
 </body>
 </html>
