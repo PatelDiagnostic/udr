@@ -1,300 +1,238 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Patel Diagnostic - Secure System with History</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patel Diagnostic | Report Management System</title>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <style>
-        :root { --main-blue: #0b4ea2; --main-red: #d71920; }
-        body { font-family: 'Arial', sans-serif; margin: 0; background: #525659; color: #333; overflow: hidden; }
-        
-        /* LOGIN OVERLAY */
-        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--main-blue); display: flex; justify-content: center; align-items: center; z-index: 9999; }
-        .login-box { background: white; padding: 40px; border-radius: 8px; text-align: center; width: 320px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .login-box input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; }
-        .login-box button { width: 100%; padding: 12px; background: var(--main-red); color: white; border: none; cursor: pointer; font-weight: bold; }
+        :root {
+            --primary-blue: #0056b3;
+            --success-green: #28a745;
+            --bg-light: #f4f7f9;
+            --white: #ffffff;
+            --text-dark: #2d3436;
+        }
 
-        /* MAIN APP */
-        #main-app { display: none; height: 100vh; }
-        #admin-panel { width: 420px; background: #ffffff; padding: 15px; border-right: 1px solid #ccc; overflow-y: auto; height: 100vh; box-sizing: border-box; }
-        .input-group { margin-bottom: 10px; }
-        label { display: block; font-weight: bold; font-size: 12px; margin-bottom: 3px; }
-        .req { color: var(--main-red); }
-        input[type="text"], input[type="number"], input[type="date"] { width: 100%; padding: 8px; border: 1px solid #aaa; border-radius: 4px; box-sizing: border-box; }
-        
-        .manual-entry { background: #f0f7ff; padding: 10px; border: 1px solid #0b4ea2; border-radius: 4px; margin: 10px 0; }
-        .test-selector { height: 180px; border: 1px solid #ccc; overflow-y: auto; padding: 10px; background: #f9f9f9; font-size: 11px; }
-        .test-item { display: flex; align-items: center; border-bottom: 1px solid #eee; padding: 3px 0; }
-        
-        /* ADMIN HISTORY & SEARCH */
-        .history-section { margin-top: 20px; border-top: 2px solid #eee; padding-top: 10px; }
-        .search-row { display: flex; gap: 5px; margin-bottom: 10px; }
-        .history-table { width: 100%; font-size: 11px; border-collapse: collapse; }
-        .history-table th { background: #eee; padding: 5px; text-align: left; position: sticky; top: 0; }
-        .history-table td { padding: 5px; border-bottom: 1px solid #ddd; }
-        .history-container { max-height: 200px; overflow-y: auto; border: 1px solid #ddd; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
 
-        /* PREVIEW AREA (Upper A4) */
-        #preview-area { flex-grow: 1; display: flex; justify-content: center; padding: 20px; overflow-y: auto; }
-        #invoice-paper { width: 210mm; height: 297mm; background: white; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
-        #invoice-content { width: 100%; height: 148.5mm; padding: 10mm 15mm; box-sizing: border-box; position: relative; border-bottom: 1px dashed #ccc; }
+        /* Professional Header */
+        header {
+            background-color: var(--white);
+            border-bottom: 3px solid var(--primary-blue);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
 
-        /* BRANDING (LOCKED SVG) */
-        .inv-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--main-blue); padding-bottom: 10px; }
-        .logo-svg { width: 230px; }
-        .lab-info { text-align: right; }
-        .lab-info h3 { margin: 0; color: var(--main-red); font-size: 14px; }
-        .lab-info p { margin: 1px 0; font-size: 11px; font-weight: bold; }
-        
-        .patient-box { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 10px; margin: 12px 0; padding: 8px; border: 1px solid #333; }
-        .p-detail { font-size: 12px; margin: 2px 0; }
-        
-        table.bill-table { width: 100%; border-collapse: collapse; }
-        table.bill-table th { background: var(--main-blue); color: white; padding: 6px; text-align: left; font-size: 12px; }
-        table.bill-table td { padding: 5px; border: 1px solid #eee; font-size: 11px; }
-        .total-row { margin-top: 8px; text-align: right; border-top: 2px solid #000; padding-top: 5px; font-size: 15px; font-weight: bold; color: var(--main-blue); }
-        .footer { position: absolute; bottom: 8mm; width: calc(100% - 30mm); text-align: center; font-size: 9px; border-top: 1px solid #ddd; }
+        .brand-title {
+            color: var(--primary-blue);
+            font-weight: 800;
+            font-size: 1.5rem;
+            margin: 0;
+            letter-spacing: 1px;
+        }
 
-        @media print {
-            #login-overlay, #admin-panel { display: none; }
-            #main-app { display: block; }
-            #preview-area { padding: 0; }
-            #invoice-paper { box-shadow: none; border: none; }
-            #invoice-content { border-bottom: none; }
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .card {
+            background: var(--white);
+            width: 100%;
+            max-width: 550px;
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .header-preview {
+            width: 100%;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            margin-bottom: 25px;
+            padding: 5px;
+        }
+
+        .upload-section {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px dashed #cbd5e1;
+            border-radius: 10px;
+            background: #fafafa;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-process {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+
+        .btn-process:hover {
+            background-color: #004494;
+            transform: translateY(-2px);
+        }
+
+        .btn-download {
+            background-color: var(--success-green);
+            color: white;
+        }
+
+        #status {
+            margin: 20px 0;
+            font-weight: 600;
+        }
+
+        .hidden { display: none; }
+
+        footer {
+            padding: 20px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #636e72;
         }
     </style>
 </head>
 <body>
 
-<div id="login-overlay">
-    <div class="login-box">
-        <h2>Patel Diagnostic</h2>
-        <input type="password" id="pass-input" placeholder="Password">
-        <button onclick="checkPass()">Login</button>
-    </div>
-</div>
+<header>
+    <h1 class="brand-title">PATEL DIAGNOSTIC UDAIPUR</h1>
+    <span style="font-size: 0.8rem; color: #636e72;">Report Generator v2.0</span>
+</header>
 
-<div id="main-app">
-    <div id="admin-panel">
-        <h3 style="color: var(--main-blue); margin-top:0;">Billing Control</h3>
+<main>
+    <div class="card">
+        <h3>Letterhead Preview</h3>
+        <img id="headerLogo" class="header-preview" src="Letter Head.JPG" alt="Patel Diagnostic Letterhead">
         
-        <div class="input-group">
-            <label>Patient Name <span class="req">*</span></label>
-            <input type="text" id="in-name" oninput="updateAll()">
+        <div class="upload-section">
+            <label for="pdfInput">Upload Lab Report (PDF)</label>
+            <input type="file" id="pdfInput" accept="application/pdf">
         </div>
-        <div class="input-group">
-            <label>Age / Sex <span class="req">*</span></label>
-            <input type="text" id="in-age" placeholder="e.g. 25/M" oninput="updateAll()">
-        </div>
-        <div class="input-group">
-            <label>Contact No. <span class="req">*</span></label>
-            <input type="text" id="in-phone" oninput="updateAll()">
-        </div>
+
+        <button class="btn btn-process" onclick="processReport()">Apply Letterhead</button>
+
+        <div id="status"></div>
         
-        <div class="manual-entry">
-            <label>+ Manual Test Entry</label>
-            <input type="text" id="c-name" placeholder="Test Name" style="margin-bottom:5px;">
-            <input type="number" id="c-price" placeholder="Price">
-            <button onclick="addManual()" style="margin-top:5px; background:var(--main-blue); color:white; border:none; padding:5px; width:100%; cursor:pointer;">Add Test</button>
-        </div>
-
-        <label>Select Tests</label>
-        <div class="test-selector" id="test-list"></div>
-
-        <button onclick="window.print()" style="width:100%; padding:10px; margin-top:10px; background:var(--main-blue); color:white; border:none; font-weight:bold; cursor:pointer;">Print Upper A4</button>
-        <button onclick="exportPDF()" style="width:100%; padding:10px; margin-top:5px; background:#28a745; color:white; border:none; font-weight:bold; cursor:pointer;">Download PDF</button>
-
-        <div class="history-section">
-            <label>Bill History Search</label>
-            <div class="search-row">
-                <input type="date" id="search-date">
-                <button onclick="searchBills()" style="padding:5px; cursor:pointer;">Search</button>
-                <button onclick="renderHistory()" style="padding:5px; cursor:pointer;">Reset</button>
-            </div>
-            <div class="history-container">
-                <table class="history-table">
-                    <thead><tr><th>Date</th><th>Bill</th><th>Patient</th><th>Total</th></tr></thead>
-                    <tbody id="history-body"></tbody>
-                </table>
-            </div>
-        </div>
-        
-        <button onclick="location.reload()" style="margin-top:20px; font-size:10px; background:none; border:none; color:grey; cursor:pointer;">Log Out & Exit</button>
-    </div>
-
-    <div id="preview-area">
-        <div id="invoice-paper">
-            <div id="invoice-content">
-                <div class="inv-header">
-                    <div class="logo-svg">
-                        <svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="300" cy="150" r="120" fill="none" stroke="#1da1f2" stroke-width="10"/>
-                            <circle cx="300" cy="150" r="135" fill="none" stroke="#1da1f2" stroke-width="4"/>
-                            <circle cx="300" cy="150" r="105" fill="none" stroke="#1da1f2" stroke-width="4"/>
-                            <rect x="90" y="120" rx="12" ry="12" width="420" height="60" fill="#ffffff"/>
-                            <text x="300" y="162" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="40" font-weight="900">
-                                <tspan fill="#0b4ea2">Patel Diagnostic </tspan>
-                                <tspan fill="#d71920">Udaipur</tspan>
-                            </text>
-                        </svg>
-                    </div>
-                    <div class="lab-info">
-                        <h3>Home Blood Collection</h3>
-                        <p>8209746239</p>
-                        <p>Udaipur, Rajasthan</p>
-                    </div>
-                </div>
-
-                <div class="patient-box">
-                    <div>
-                        <p class="p-detail"><b>Patient:</b> <span id="out-name">________________</span></p>
-                        <p class="p-detail"><b>Age/Sex:</b> <span id="out-age">________________</span></p>
-                        <p class="p-detail"><b>Contact:</b> <span id="out-phone">________________</span></p>
-                    </div>
-                    <div style="text-align: right;">
-                        <p class="p-detail"><b>Bill No:</b> <span id="out-bill"></span></p>
-                        <p class="p-detail"><b>Date:</b> <span id="out-date"></span></p>
-                        <p class="p-detail"><b>Ref By:</b> Self</p>
-                    </div>
-                </div>
-
-                <table class="bill-table">
-                    <thead><tr><th style="width:30px;">#</th><th>Investigation</th><th style="text-align:right;">Price (₹)</th></tr></thead>
-                    <tbody id="out-table"></tbody>
-                </table>
-                <div class="total-row">Net Payable: ₹ <span id="out-total">0.00</span></div>
-                <div class="footer"><p>* Computer-generated invoice. No signature required.</p></div>
-            </div>
+        <div id="downloadArea" class="hidden">
+            <button class="btn btn-download" onclick="downloadPDF()">Download Final Report</button>
         </div>
     </div>
-</div>
+</main>
+
+<footer>
+    &copy; 2026 Patel Diagnostic. Private & Confidential. All processing occurs locally in-browser.
+</footer>
 
 <script>
-    const MASTER_PASS = "Patel@2025";
-    let manualTests = [];
-    const db = [
-        {n:"Package 1 (CBC, Sugar, Lipid, LFT, KFT, Thyroid)", p:599},
-        {n:"Package 2 (CBC, Sugar, HbA1c, Chol, Trig, SGOT/PT, Uric, Creat)", p:849},
-        {n:"Package 3 (Sugar, Lipid, LFT, KFT, Thyroid)", p:899},
-        {n:"Package 4 (Pkg 3 + Urine R/M, CBC, HbA1c)", p:1379},
-        {n:"Package 5 (Pkg 4 + ESR, Vit-B12)", p:1649},
-        {n:"Package 6 (Pkg 5 + Vit-D)", p:1849},
-        {n:"Package 7 (Adv. Profile + Vit B12, Vit D, Iron)", p:2200},
-        {n:"Package 8 (Full Body + Iron, ESR, HbA1c)", p:2399},
-        {n:"Package 9 (Female Special Profile)", p:2499},
-        {n:"Package 10 (Premium Health Checkup)", p:3200},
-        {n:"Package 11 (Platinum Profile)", p:3599},
-        {n:"Chikungunya IgM", p:600}, {n:"Complete Blood Count (CBC)", p:250},
-        {n:"Dengue Duo Screening", p:950}, {n:"Dengue IgG & IgM", p:700},
-        {n:"Electrolytes (Na/K/Cl)", p:450}, {n:"ESR Test", p:100},
-        {n:"FSH Test", p:450}, {n:"Glucose Random", p:80},
-        {n:"HBA1C Test", p:400}, {n:"Iron Studies", p:700},
-        {n:"KFT (Kidney Function)", p:600}, {n:"Lipid Profile", p:500},
-        {n:"LFT (Liver Function)", p:600}, {n:"LH Test", p:450},
-        {n:"Pancreas Profile", p:800}, {n:"Prolactin (PRL)", p:450},
-        {n:"PT INR", p:350}, {n:"Testosterone Total", p:600},
-        {n:"Thyroid Profile Total", p:400}, {n:"Troponin I", p:900},
-        {n:"Troponin T", p:1200}, {n:"Typhoid (Typhidot) IgG/MgM", p:500},
-        {n:"Urine Routine & Micro", p:150}, {n:"Vitamin B12", p:800},
-        {n:"Vitamin D", p:1000}
-    ];
+    const { PDFDocument } = PDFLib;
+    let processedPdfBytes = null;
+    let currentFileName = "report.pdf";
 
-    function checkPass() {
-        if(document.getElementById('pass-input').value === MASTER_PASS) {
-            document.getElementById('login-overlay').style.display = 'none';
-            document.getElementById('main-app').style.display = 'flex';
-            initApp();
+    async function processReport() {
+        const status = document.getElementById('status');
+        const pdfInput = document.getElementById('pdfInput');
+        const headerImg = document.getElementById('headerLogo');
+
+        if (!pdfInput.files[0]) {
+            status.innerHTML = '<span style="color: #e74c3c;">Error: Please select a PDF file.</span>';
+            return;
+        }
+
+        try {
+            status.innerHTML = '<span style="color: var(--primary-blue);">Processing Report...</span>';
+            currentFileName = pdfInput.files[0].name;
+
+            // Load PDF
+            const pdfData = await pdfInput.files[0].arrayBuffer();
+            const pdfDoc = await PDFDocument.load(pdfData);
+
+            // Load the default image from the page
+            const response = await fetch(headerImg.src);
+            const imageBytes = await response.arrayBuffer();
+            
+            // Embed image (Note: Using JPG embed as per your file extension)
+            const embeddedImage = await pdfDoc.embedJpg(imageBytes);
+            const imageDims = embeddedImage.scale(1);
+
+            const pages = pdfDoc.getPages();
+            
+            // Apply to all pages
+            for (const page of pages) {
+                const { width, height } = page.getSize();
+                
+                // Scale width to page width
+                const drawWidth = width;
+                const drawHeight = (imageDims.height / imageDims.width) * width;
+
+                page.drawImage(embeddedImage, {
+                    x: 0,
+                    y: height - drawHeight,
+                    width: drawWidth,
+                    height: drawHeight,
+                });
+            }
+
+            processedPdfBytes = await pdfDoc.save();
+            status.innerHTML = '<span style="color: var(--success-green);">Letterhead Applied Successfully!</span>';
+            document.getElementById('downloadArea').classList.remove('hidden');
+
+        } catch (err) {
+            console.error(err);
+            status.innerHTML = '<span style="color: #e74c3c;">Error processing PDF. Ensure "Letter Head.JPG" is in the same folder.</span>';
         }
     }
 
-    function initApp() {
-        if(!localStorage.getItem('pdSerial')) localStorage.setItem('pdSerial', '1001');
-        if(!localStorage.getItem('pdHistory')) localStorage.setItem('pdHistory', '[]');
-        const list = document.getElementById('test-list');
-        db.forEach(t => {
-            list.innerHTML += `<div class="test-item"><input type="checkbox" class="t-chk" data-n="${t.n}" data-p="${t.p}" onchange="updateAll()"> <span>${t.n} (₹${t.p})</span></div>`;
-        });
-        updateAll();
-        renderHistory();
-        setInterval(() => { document.getElementById('out-date').innerText = new Date().toLocaleString('en-IN'); }, 1000);
-    }
-
-    function addManual() {
-        const n = document.getElementById('c-name').value;
-        const p = document.getElementById('c-price').value;
-        if(n && p) {
-            manualTests.push({n: n, p: parseFloat(p)});
-            document.getElementById('c-name').value = "";
-            document.getElementById('c-price').value = "";
-            updateAll();
-        }
-    }
-
-    function updateAll() {
-        const bill = "PD-2025-" + localStorage.getItem('pdSerial');
-        document.getElementById('out-bill').innerText = bill;
-        document.getElementById('out-name').innerText = document.getElementById('in-name').value || "________________";
-        document.getElementById('out-age').innerText = document.getElementById('in-age').value || "________________";
-        document.getElementById('out-phone').innerText = document.getElementById('in-phone').value || "________________";
-        
-        let total = 0, rows = "", count = 1;
-        document.querySelectorAll('.t-chk:checked').forEach(c => {
-            total += parseFloat(c.dataset.p);
-            rows += `<tr><td>${count++}</td><td>${c.dataset.n}</td><td style="text-align:right;">${parseFloat(c.dataset.p).toFixed(2)}</td></tr>`;
-        });
-        manualTests.forEach(t => {
-            total += t.p;
-            rows += `<tr><td>${count++}</td><td>${t.n}</td><td style="text-align:right;">${t.p.toFixed(2)}</td></tr>`;
-        });
-        document.getElementById('out-table').innerHTML = rows;
-        document.getElementById('out-total').innerText = total.toFixed(2);
-    }
-
-    function exportPDF() {
-        const name = document.getElementById('in-name').value || "Patient";
-        const bill = document.getElementById('out-bill').innerText;
-        const total = document.getElementById('out-total').innerText;
-        const dateObj = new Date();
-        const dateStr = dateObj.toISOString().split('T')[0]; // YYYY-MM-DD
-        
-        html2pdf().set({
-            margin: 0, filename: `${name}_Bill.pdf`, html2canvas: { scale: 3 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        }).from(document.getElementById('invoice-content')).save().then(() => {
-            // Save to Local History
-            let history = JSON.parse(localStorage.getItem('pdHistory'));
-            history.unshift({ date: dateStr, bill: bill, patient: name, total: total });
-            localStorage.setItem('pdHistory', JSON.stringify(history));
-            
-            // Increment Serial
-            localStorage.setItem('pdSerial', parseInt(localStorage.getItem('pdSerial')) + 1);
-            
-            // Clear inputs
-            manualTests = [];
-            document.querySelectorAll('.t-chk').forEach(c => c.checked = false);
-            document.getElementById('in-name').value = "";
-            document.getElementById('in-age').value = "";
-            document.getElementById('in-phone').value = "";
-            
-            updateAll();
-            renderHistory();
-        });
-    }
-
-    function renderHistory(data = null) {
-        const history = data || JSON.parse(localStorage.getItem('pdHistory')) || [];
-        const body = document.getElementById('history-body');
-        body.innerHTML = history.map(h => `<tr><td>${h.date}</td><td>${h.bill}</td><td>${h.patient}</td><td>₹${h.total}</td></tr>`).join('');
-    }
-
-    function searchBills() {
-        const searchDate = document.getElementById('search-date').value;
-        if(!searchDate) return;
-        const history = JSON.parse(localStorage.getItem('pdHistory'));
-        const filtered = history.filter(h => h.date === searchDate);
-        renderHistory(filtered);
+    function downloadPDF() {
+        if (!processedPdfBytes) return;
+        const blob = new Blob([processedPdfBytes], { type: "application/pdf" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = currentFileName;
+        link.click();
     }
 </script>
+
 </body>
 </html>
