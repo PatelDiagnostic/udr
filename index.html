@@ -2,236 +2,176 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patel Diagnostic | Report Management System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vijay Path Lab | Proportional Overlay</title>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <style>
-        :root {
-            --primary-blue: #0056b3;
-            --success-green: #28a745;
-            --bg-light: #f4f7f9;
-            --white: #ffffff;
-            --text-dark: #2d3436;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-light);
-            color: var(--text-dark);
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* Professional Header */
-        header {
-            background-color: var(--white);
-            border-bottom: 3px solid var(--primary-blue);
-            padding: 1rem 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        .brand-title {
-            color: var(--primary-blue);
-            font-weight: 800;
-            font-size: 1.5rem;
-            margin: 0;
-            letter-spacing: 1px;
-        }
-
-        main {
-            flex: 1;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background-color: #f1f5f9;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 40px 20px;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
         }
-
         .card {
-            background: var(--white);
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             width: 100%;
-            max-width: 550px;
-            padding: 35px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            text-align: center;
+            max-width: 450px;
+            border-top: 6px solid #d32f2f;
         }
-
-        .header-preview {
-            width: 100%;
-            border: 1px solid #eee;
-            border-radius: 5px;
-            margin-bottom: 25px;
-            padding: 5px;
-        }
-
-        .upload-section {
-            margin-bottom: 25px;
-            text-align: left;
-        }
-
-        label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 10px;
-            font-size: 0.9rem;
-        }
-
-        input[type="file"] {
-            width: 100%;
-            padding: 12px;
-            border: 2px dashed #cbd5e1;
-            border-radius: 10px;
-            background: #fafafa;
-            cursor: pointer;
+        h2 { color: #1e293b; margin: 0 0 20px 0; text-align: center; font-size: 20px; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; font-size: 11px; font-weight: bold; color: #64748b; margin-bottom: 5px; text-transform: uppercase; }
+        
+        /* IPHONE FIX: Font size 16px prevents auto-zooming on focus */
+        input[type="file"] { 
+            width: 100%; 
+            border: 1px solid #cbd5e1; 
+            padding: 8px; 
+            border-radius: 6px; 
+            font-size: 16px; 
             box-sizing: border-box;
         }
-
-        .btn {
-            width: 100%;
-            padding: 15px;
-            font-size: 1.1rem;
-            font-weight: 700;
+        
+        #processBtn {
+            background-color: #d32f2f;
+            color: white;
             border: none;
-            border-radius: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s ease;
             margin-top: 10px;
+            transition: background 0.2s;
         }
-
-        .btn-process {
-            background-color: var(--primary-blue);
-            color: white;
-        }
-
-        .btn-process:hover {
-            background-color: #004494;
-            transform: translateY(-2px);
-        }
-
-        .btn-download {
-            background-color: var(--success-green);
-            color: white;
-        }
-
-        #status {
-            margin: 20px 0;
-            font-weight: 600;
-        }
-
-        .hidden { display: none; }
-
-        footer {
-            padding: 20px;
-            text-align: center;
-            font-size: 0.85rem;
-            color: #636e72;
+        #processBtn:hover { background-color: #b91c1c; }
+        #processBtn:disabled { background-color: #94a3b8; cursor: not-allowed; }
+        #status { margin-top: 15px; text-align: center; font-size: 14px; color: #475569; font-weight: 500; word-break: break-all; }
+        
+        /* Styling for the backup download link */
+        .download-link {
+            display: inline-block;
+            margin-top: 5px;
+            color: #d32f2f;
+            text-decoration: underline;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-<header>
-    <h1 class="brand-title">PATEL DIAGNOSTIC UDAIPUR</h1>
-    <span style="font-size: 0.8rem; color: #636e72;">Report Generator v2.0</span>
-</header>
-
-<main>
-    <div class="card">
-        <h3>Letterhead Preview</h3>
-        <img id="headerLogo" class="header-preview" src="Letter Head.JPG" alt="Patel Diagnostic Letterhead">
-        
-        <div class="upload-section">
-            <label for="pdfInput">Upload Lab Report (PDF)</label>
-            <input type="file" id="pdfInput" accept="application/pdf">
-        </div>
-
-        <button class="btn btn-process" onclick="processReport()">Apply Letterhead</button>
-
-        <div id="status"></div>
-        
-        <div id="downloadArea" class="hidden">
-            <button class="btn btn-download" onclick="downloadPDF()">Download Final Report</button>
-        </div>
+<div class="card">
+    <h2>Branding Overlay Tool</h2>
+    
+    <div class="input-group">
+        <label>1. Select Report (PDF)</label>
+        <input type="file" id="pdfInput" accept="application/pdf">
     </div>
-</main>
 
-<footer>
-    &copy; 2026 Patel Diagnostic. Private & Confidential. All processing occurs locally in-browser.
-</footer>
+    <button id="processBtn" disabled>Generate Branded PDF</button>
+    <div id="status">Ready</div>
+</div>
 
 <script>
-    const { PDFDocument } = PDFLib;
-    let processedPdfBytes = null;
-    let currentFileName = "report.pdf";
+    const pdfInput = document.getElementById('pdfInput');
+    const processBtn = document.getElementById('processBtn');
+    const status = document.getElementById('status');
 
-    async function processReport() {
-        const status = document.getElementById('status');
-        const pdfInput = document.getElementById('pdfInput');
-        const headerImg = document.getElementById('headerLogo');
+    // Hosted image URLs (ensure these files are in the same folder as this HTML file on your server)
+    const headerImageUrl = 'header.jpg';
+    const footerImageUrl = 'footer.jpg';
 
-        if (!pdfInput.files[0]) {
-            status.innerHTML = '<span style="color: #e74c3c;">Error: Please select a PDF file.</span>';
-            return;
-        }
+    function checkFiles() {
+        processBtn.disabled = !(pdfInput.files.length > 0);
+    }
+
+    pdfInput.addEventListener('change', checkFiles);
+
+    // Fetch images directly from your web host
+    async function embedHostedImage(pdfDoc, url) {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`Failed to load image from ${url}`);
+        const bytes = await res.arrayBuffer();
+        return url.toLowerCase().includes(".png") ? await pdfDoc.embedPng(bytes) : await pdfDoc.embedJpg(bytes);
+    }
+
+    processBtn.addEventListener('click', async () => {
+        status.innerText = "Processing...";
+        processBtn.disabled = true;
 
         try {
-            status.innerHTML = '<span style="color: var(--primary-blue);">Processing Report...</span>';
-            currentFileName = pdfInput.files[0].name;
+            const originalFile = pdfInput.files[0];
+            const pdfBytes = await originalFile.arrayBuffer();
+            const pdfDoc = await PDFLib.PDFDocument.load(pdfBytes);
 
-            // Load PDF
-            const pdfData = await pdfInput.files[0].arrayBuffer();
-            const pdfDoc = await PDFDocument.load(pdfData);
+            // Fetch the hosted images
+            const headerImg = await embedHostedImage(pdfDoc, headerImageUrl);
+            const footerImg = await embedHostedImage(pdfDoc, footerImageUrl);
 
-            // Load the default image from the page
-            const response = await fetch(headerImg.src);
-            const imageBytes = await response.arrayBuffer();
-            
-            // Embed image (Note: Using JPG embed as per your file extension)
-            const embeddedImage = await pdfDoc.embedJpg(imageBytes);
-            const imageDims = embeddedImage.scale(1);
+            const headerDims = headerImg.scale(1);
+            const footerDims = footerImg.scale(1);
 
             const pages = pdfDoc.getPages();
-            
-            // Apply to all pages
-            for (const page of pages) {
+            pages.forEach(page => {
                 const { width, height } = page.getSize();
                 
-                // Scale width to page width
-                const drawWidth = width;
-                const drawHeight = (imageDims.height / imageDims.width) * width;
+                const hScale = width / headerDims.width;
+                const hFinalHeight = headerDims.height * hScale;
 
-                page.drawImage(embeddedImage, {
+                const fScale = width / footerDims.width;
+                const fFinalHeight = footerDims.height * fScale;
+
+                page.drawImage(headerImg, {
                     x: 0,
-                    y: height - drawHeight,
-                    width: drawWidth,
-                    height: drawHeight,
+                    y: height - hFinalHeight,
+                    width: width,
+                    height: hFinalHeight
                 });
-            }
 
-            processedPdfBytes = await pdfDoc.save();
-            status.innerHTML = '<span style="color: var(--success-green);">Letterhead Applied Successfully!</span>';
-            document.getElementById('downloadArea').classList.remove('hidden');
+                page.drawImage(footerImg, {
+                    x: 0,
+                    y: 0,
+                    width: width,
+                    height: fFinalHeight
+                });
+            });
 
+            const modifiedPdfBytes = await pdfDoc.save();
+            
+            // Filename matching logic
+            const originalName = originalFile.name.replace(/\.[^/.]+$/, ""); 
+            const downloadName = `${originalName}_branded.pdf`;
+
+            const blob = new Blob([modifiedPdfBytes], { type: 'application/pdf' });
+            const blobUrl = URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = downloadName;
+            
+            // IPHONE FIX: Append link to body is required for iOS Safari
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // IPHONE FIX: Backup Manual Link
+            status.innerHTML = `Success! <br><a href="${blobUrl}" download="${downloadName}" class="download-link">Click here if download didn't start</a>`;
+            
+            processBtn.disabled = false;
         } catch (err) {
             console.error(err);
-            status.innerHTML = '<span style="color: #e74c3c;">Error processing PDF. Ensure "Letter Head.JPG" is in the same folder.</span>';
+            status.innerText = "Error. Please check if header.jpg and footer.jpg are uploaded to the server.";
+            processBtn.disabled = false;
         }
-    }
-
-    function downloadPDF() {
-        if (!processedPdfBytes) return;
-        const blob = new Blob([processedPdfBytes], { type: "application/pdf" });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = currentFileName;
-        link.click();
-    }
+    });
 </script>
 
 </body>
