@@ -148,7 +148,7 @@
             
             // Filename matching logic
             const originalName = originalFile.name.replace(/\.[^/.]+$/, ""); 
-            const downloadName = `${originalName}_branded.pdf`;
+            const downloadName = `${originalName}_OK.pdf`;
 
             const blob = new Blob([modifiedPdfBytes], { type: 'application/pdf' });
             const blobUrl = URL.createObjectURL(blob);
